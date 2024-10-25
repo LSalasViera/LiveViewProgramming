@@ -46,6 +46,39 @@ class Nim implements NimGame {
         this.rows = Arrays.copyOf(rows, rows.length);
     }
 
+    public void show() {
+        Turtle turtle = new Turtle(500, 500);
+        int rowHeight = 35;
+        turtle.left(90);
+        int countWayBack = 0;
+
+        for (int row = 0; row < rows.length; row++) {
+            System.out.println(countWayBack);
+            turtle.penUp();
+            turtle.backward(rowHeight);
+            turtle.left(90);
+            turtle.forward(countWayBack);
+            turtle.right(90);
+            turtle.penDown();
+            int sticks = rows[row];
+            countWayBack = 0;
+
+            for (int i = 0; i < sticks; i++) {
+                countWayBack = countWayBack + 5;
+                turtle.color(139, 69, 19);
+                turtle.forward(30);
+                turtle.backward(30);
+                turtle.right(90);
+                turtle.penUp();
+                turtle.forward(5);
+                turtle.left(90);
+                turtle.penDown();
+            }
+        }
+        turtle.penUp();
+        turtle.penDown();
+    }
+
     private Nim play(Move m) {
         assert !isGameOver();
         assert m.row < rows.length && m.number <= rows[m.row];
@@ -86,48 +119,65 @@ class Nim implements NimGame {
         for(int n : rows) s += "\n" + "I ".repeat(n);
         return s;
     }
-    // Getter-Methode für die rows
+    
     public int[] getRows() {
-        return Arrays.copyOf(rows, rows.length); // Gebe eine Kopie des Arrays zurück
+        return Arrays.copyOf(rows, rows.length);
     }
+    
     @Override
     public boolean equals(Object other) {
         if (other == null) return false;  // Null-Check
         if (other == this) return true;   // Identitäts-Check
         if (other.getClass() != getClass()) return false;  // Typ-Check
         Nim that = (Nim) other;  // Casten des Objekts
-        return Arrays.equals(this.rows, that.rows);  // Vergleichen der Arrays
+        int[] sortedThisRows = Arrays.stream(this.rows)
+                                 .filter(num -> num != 0) // Entfernt alle Nullen
+                                 .sorted()
+                                 .toArray();
+
+        int[] sortedThatRows = Arrays.stream(that.rows)
+                                 .filter(num -> num != 0) // Entfernt alle Nullen
+                                 .sorted()
+                                 .toArray();
+        Arrays.sort(sortedThisRows);
+        Arrays.sort(sortedThatRows);
+        return Arrays.equals(sortedThisRows, sortedThatRows);
     }
 
     @Override
     public int hashCode() {
-    return Objects.hash(Arrays.hashCode(rows));  // Verwendung von Objects.hash()
+    return Objects.hash(Arrays.hashCode(rows));
     }
 }
 
 class NimView extends Nim {
     
-    // Konstruktor, der die Superklasse initialisiert
     public NimView(int... rows) {
         this.rows = rows;
     }
 
     public void show() {
         Turtle turtle = new Turtle(500, 500);
-
-        int rowHeight = 25;
+        int rowHeight = 35;
         turtle.left(90);
+        int countWayBack = 0;
 
         for (int row = 0; row < rows.length; row++) {
+            System.out.println(countWayBack);
             turtle.penUp();
             turtle.backward(rowHeight);
+            turtle.left(90);
+            turtle.forward(countWayBack);
+            turtle.right(90);
             turtle.penDown();
-            int sticks = rows[row]; // Anzahl der Sticks in der Reihe
+            int sticks = rows[row];
+            countWayBack = 0;
 
             for (int i = 0; i < sticks; i++) {
+                countWayBack = countWayBack + 5;
                 turtle.color(139, 69, 19);
-                turtle.forward(20);
-                turtle.backward(20);
+                turtle.forward(30);
+                turtle.backward(30);
                 turtle.right(90);
                 turtle.penUp();
                 turtle.forward(5);
@@ -140,8 +190,8 @@ class NimView extends Nim {
     }
 
     public void update(int... newRows) {
-        this.rows = newRows; // Aktualisiere die rows
-        show(); // Zeige die aktualisierte Ansicht
+        this.rows = newRows;
+        show();
     }
 }
 
@@ -224,9 +274,9 @@ nim.play(Move.of(1,2))
 
 Objekte erzeugen:
 
-Nim nim1 = Nim.of(2, 3, 4);
-Nim nim2 = Nim.of(2, 3, 4);
-Nim nim3 = Nim.of(1, 3, 5);
+Nim nim1 = Nim.of(5, 3, 1);
+Nim nim2 = Nim.of(1, 3, 5, 0);
+Nim nim3 = Nim.of(2, 3, 5);
 
 Equals:
 
