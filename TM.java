@@ -3,6 +3,43 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+Clerk.markdown("""
+# Abgabe - Turing Maschine
+## Transitionstabelle - Dekrementierung einer Binärzahl
+
+| fromState | read | write | move | toState |
+|-----------|------|-------|------|---------|
+| S         | #    | #     | L    | S       |
+| S         | 1    | 0     | R    | R       |
+| R         | 0    | 1     | L    | L       |
+| R         | 0    | 0     | R    | R       |
+| R         | 1    | 1     | R    | R       |
+| R         | #    | #     | L    | W       |
+| W         | 1    | 1     | R    | HALT    |
+| W         | 0    | 0     | R    | HALT    |
+| W         | #    | #     | R    | HALT    |
+| L         | 0    | 1     | L    | L       |
+| L         | 1    | 0     | R    | R       |
+| L         | #    | #     | R    | R       |
+""");
+
+Clerk.markdown("""
+## Transitionstabelle - Einsen nach rechts schieben
+
+| fromState | read | write | move | toState |
+|-----------|------|-------|------|---------|
+| S         | 1    | 1     | L    | S       |
+| S         | S    | S     | R    | HALT    |
+| S         | 0    | 0     | L    | 0       |
+| 0         | 0    | 0     | L    | 0       |
+| 0         | 1    | 0     | R    | 1       |
+| 0         | S    | S     | R    | HALT    |
+| 1         | 0    | 0     | R    | 1       |
+| 1         | 1    | 1     | L    | D       |
+| 1         | S    | S     | L    | D       |
+| D         | 0    | 1     | L    | S       |
+""");
+
 public class Tape {
     private List<Character> cells;
     private int headPosition;
@@ -47,7 +84,7 @@ public class Tape {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cells.size(); i++) {
             if (i == headPosition) {
-                sb.append("[").append(cells.get(i)).append("]");
+                sb.append("{").append(cells.get(i)).append("}");
             } else {
                 sb.append(" ").append(cells.get(i)).append(" ");
             }
@@ -106,9 +143,17 @@ public class TM {
         return true;
     }
 
+    public void drawTurtle(Tape tape){
+        Turtle turtle = new Turtle(500,80);
+        System.out.println(tape);
+    }
+
     public void run() {
+        System.out.println(tape);
+        drawTurtle(tape);
         while (step()) {
             System.out.println(tape);
+            drawTurtle(tape);
         }
         System.out.println("Die Maschine hat den Haltezustand erreicht.");
     }
