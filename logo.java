@@ -177,7 +177,7 @@ ${0}
 
 Das macht noch mehr Spaß! Die Zeichnungen werden auf Seiten des Java-Programms mit jeder Änderung am Slider neu erzeugt.
 
-""", Text.cutOut("./logo.java", "// interactivity")));
+""",
 
 // interactivity
 turtle = new Turtle(300, 350);
