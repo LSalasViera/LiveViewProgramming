@@ -1,4 +1,3 @@
-
 Tape tape = new Tape('0'); 
 
 // Initialisiere das Band mit der Binärzahl "S 0 1 0 1 0 1 S"
@@ -16,7 +15,7 @@ tape.write('0');
 tape.move(Move.RIGHT);
 tape.write('1');
 tape.move(Move.RIGHT);
-tape.write('S');
+tape.write('#');
 
 tape.move(Move.LEFT); // Startposition des Kopfes auf erstem Zeichen
 

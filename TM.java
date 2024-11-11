@@ -3,8 +3,9 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-Clerk.markdown("""
-# Abgabe - Turing Maschine
+public static void decrementTM() {
+    Clerk.markdown("""
+# Abgabe - Turing Maschine - Salas Viera, Luis Ramon
 ## Transitionstabelle - Dekrementierung einer Binärzahl
 
 | fromState | read | write | move | toState |
@@ -24,6 +25,51 @@ Clerk.markdown("""
 """);
 
 Clerk.markdown("""
+## LVP - Dekrementierung einer Binärzahl
+
+""");
+
+    Tape tape = new Tape('#');
+    // Initialisiere das Band
+    tape.write('#');
+    tape.move(Move.RIGHT);
+    tape.write('1');
+    tape.move(Move.RIGHT);
+    tape.write('1');
+    tape.move(Move.RIGHT);
+    tape.write('0');
+    tape.move(Move.RIGHT);
+    tape.write('0');
+    tape.move(Move.RIGHT);
+    tape.write('0');
+    tape.move(Move.RIGHT);
+    tape.write('#'); 
+
+    // Tabelle mit Transitionen
+    Table table = new Table();
+    table.addTransition("S", '#', '#', Move.LEFT, "S");
+    table.addTransition("S", '1', '0', Move.RIGHT, "R");
+    table.addTransition("S", '0', '1', Move.LEFT, "L");
+
+    table.addTransition("R", '0', '0', Move.RIGHT, "R");
+    table.addTransition("R", '1', '1', Move.RIGHT, "R");
+    table.addTransition("R", '#', '#', Move.LEFT, "W");
+
+    table.addTransition("W", '1', '1', Move.RIGHT, "HALT");
+    table.addTransition("W", '0', '0', Move.RIGHT, "HALT");
+    table.addTransition("W", '#', '#', Move.RIGHT, "HALT");
+
+    table.addTransition("L", '0', '1', Move.LEFT, "L");
+    table.addTransition("L", '1', '0', Move.RIGHT, "R");
+    table.addTransition("L", '#', '#', Move.RIGHT, "R");
+
+    TM tm = new TM(tape, table, "S");
+    tm.run();
+}
+
+public static void moveOnesTM() {
+
+    Clerk.markdown("""
 ## Transitionstabelle - Einsen nach rechts schieben
 
 | fromState | read | write | move | toState |
@@ -40,16 +86,62 @@ Clerk.markdown("""
 | D         | 0    | 1     | L    | S       |
 """);
 
+Clerk.markdown("""
+## LVP - Einsen nach rechts schieben
+
+""");
+    
+    Tape tape = new Tape('0'); 
+
+    // Initialisiere das Band mit der Binärzahl "S 0 1 0 1 0 1 S"
+    tape.write('S');
+    tape.move(Move.RIGHT);
+    tape.write('0');
+    tape.move(Move.RIGHT);
+    tape.write('1');
+    tape.move(Move.RIGHT);
+    tape.write('0');
+    tape.move(Move.RIGHT);
+    tape.write('1');
+    tape.move(Move.RIGHT);
+    tape.write('0');
+    tape.move(Move.RIGHT);
+    tape.write('1');
+    tape.move(Move.RIGHT);
+    tape.write('S');
+
+    tape.move(Move.LEFT); // Startposition des Kopfes auf erstem Zeichen
+
+    // Tabelle mit Transitionen
+    Table table = new Table();
+    table.addTransition("S", '1', '1', Move.LEFT, "S");
+    table.addTransition("S", 'S', 'S', Move.RIGHT, "HALT");
+    table.addTransition("S", '0', '0', Move.LEFT, "0");
+
+    table.addTransition("0", '0', '0', Move.LEFT, "0");
+    table.addTransition("0", '1', '0', Move.RIGHT, "1");
+    table.addTransition("0", 'S', 'S', Move.RIGHT, "HALT");
+
+    table.addTransition("1", '0', '0', Move.RIGHT, "1");
+    table.addTransition("1", '1', '1', Move.LEFT, "D");
+    table.addTransition("1", 'S', 'S', Move.LEFT, "D");
+
+    table.addTransition("D", '0', '1', Move.LEFT, "S");
+
+    TM tm = new TM(tape, table, "S");
+    tm.run();
+}
+
 public class Tape {
-    private List<Character> cells;
-    private int headPosition;
-    private char blankCell;
+    public List<Character> cells;
+    public int headPosition;
+    public char blankCell;
 
     public Tape(char blankCell) {
         this.cells = new ArrayList<>();
         this.headPosition = 0;
         this.blankCell = blankCell;
-        cells.add(blankCell); // Initialisiert das Band mit einer leeren Zelle
+        cells.add(blankCell);
     }
 
     public char read() {
@@ -143,17 +235,86 @@ public class TM {
         return true;
     }
 
-    public void drawTurtle(Tape tape){
-        Turtle turtle = new Turtle(500,80);
-        System.out.println(tape);
+    public void drawTurtle(){
+        Turtle turtle = new Turtle(550,80);
+
+        int cellWidth = 50;
+        int cellHeight = 80;
+        int numCells = 11;  // 5 Nachbarzellen links, 1 Zelle für den Kopf, 5 Nachbarzellen rechts
+        int centerPosition = 6; // Position der Zelle, die den Kopf enthält
+        int testPosition = (6 - tape.headPosition) - 1;
+        double displayRange = 5.5;
+        double startX = (-displayRange * cellWidth) + (testPosition  * cellWidth);
+
+        turtle.penUp();
+        turtle.left(90);
+        turtle.forward(30);
+        turtle.color(255, 0, 0);
+        turtle.text("K");
+        turtle.color(0, 0, 0);
+        turtle.backward(30);
+        turtle.right(90);
+
+        turtle.penUp();
+        turtle.forward(startX);
+        turtle.penDown();
+
+        for (int i = 0; i <= 6 ; i++) {
+
+            char cellContent = tape.cells.get(i);
+
+            //Zeichne Zelle
+            turtle.penUp();
+            turtle.forward(cellWidth);
+            turtle.penDown();
+            turtle.left (90);
+            turtle.forward(cellHeight / 2);
+            turtle.left (90);
+            turtle.forward(cellWidth);
+            turtle.left (90);
+            turtle.forward(cellHeight);
+            turtle.left (90);
+            turtle.forward(cellWidth);
+            turtle.left (90);
+            turtle.forward(cellHeight / 2);
+            turtle.right(90);
+
+
+            turtle.left(180);
+            turtle.penUp();
+            turtle.forward(25);
+            turtle.right(90);
+            turtle.text(String.valueOf(cellContent));
+            turtle.left(90);
+            turtle.backward(25);
+            turtle.right(180);
+        }
+        
+    }
+
+    // Methode, die das Band im Markdown-Format ausgibt
+    public void printTapeInMarkdown() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < tape.cells.size(); i++) {
+            char cell = tape.cells.get(i);
+            if (i == tape.headPosition) {
+                sb.append("{").append(cell).append("} ");
+            } else {
+                sb.append(cell).append(" ");
+            }
+        }
+        // Ausgabe im Markdown-Format (ohne Nummerierung)
+        Clerk.markdown("```\n" + sb.toString().trim() + "\n```");
     }
 
     public void run() {
         System.out.println(tape);
-        drawTurtle(tape);
+        printTapeInMarkdown();
+        drawTurtle();
         while (step()) {
             System.out.println(tape);
-            drawTurtle(tape);
+            printTapeInMarkdown();
+            drawTurtle();
         }
         System.out.println("Die Maschine hat den Haltezustand erreicht.");
     }
@@ -166,6 +327,8 @@ record Action(char write, Move move, String toState) {}
 enum Move {
     LEFT, RIGHT
 }
+
+
 
 /* Testing the Tape 
 
